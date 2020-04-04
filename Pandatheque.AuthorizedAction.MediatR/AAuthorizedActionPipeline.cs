@@ -43,7 +43,7 @@ namespace Pandatheque.AuthorizedAction.MediatR
         protected AAuthorizedActionPipeline(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            this.actionChecker = this.serviceProvider.GetService<IAuthorizedActionChecker<TPolicyContext, TAction>>();
+            this.actionChecker = this.serviceProvider.GetRequiredService<IAuthorizedActionChecker<TPolicyContext, TAction>>();
         }
 
         #endregion // Constructors
@@ -72,7 +72,7 @@ namespace Pandatheque.AuthorizedAction.MediatR
         }
 
         /// <summary>
-        /// Converts the request, the policy context and the action parameters to the unauthorized response.
+        /// Converts the request and the policy context to the unauthorized response.
         /// </summary>
         /// <param name="request">The request to convert.</param>
         /// <param name="policyContext">The policy context.</param>

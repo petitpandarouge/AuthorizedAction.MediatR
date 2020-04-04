@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Pandatheque.AuthorizedAction.MediatR.TestWebApp.Models;
 using Pandatheque.AuthorizedAction.MediatR.TestWebApp.Requests;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
@@ -36,6 +37,18 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Controllers
         {
             CloturerEnqueteRequest request = new CloturerEnqueteRequest { EnqueteId = id };
             (bool, Enquete) result = await this.mediator.Send(request);
+            if (result.Item1)
+            {
+                return this.View(result.Item2);
+            }
+
+            return this.View("Unauthorized");
+        }
+
+        public async Task<IActionResult> ListerEnquetes()
+        {
+            ListerEnquetesRequest request = new ListerEnquetesRequest();
+            (bool, ICollection<Enquete>) result = await this.mediator.Send(request);
             if (result.Item1)
             {
                 return this.View(result.Item2);

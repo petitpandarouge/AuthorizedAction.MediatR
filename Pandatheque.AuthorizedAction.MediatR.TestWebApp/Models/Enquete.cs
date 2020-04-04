@@ -14,6 +14,8 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Models
 
         public Utilisateur UtilisateurModification { get; set; }
 
+        public bool CanCloture { get; set; } = false;
+
         public static Enquete Create(int id)
         {
             return new Enquete
