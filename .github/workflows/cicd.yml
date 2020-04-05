@@ -35,7 +35,7 @@ jobs:
       
     - name: Publish NuGet on version changed
       if: success()
-      uses: rohith/publish-nuget@v2.2.0
+      uses: rohith/publish-nuget@v2.2.1
       with:
         PROJECT_FILE_PATH: Pandatheque.AuthorizedAction.MediatR/Pandatheque.AuthorizedAction.MediatR.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
