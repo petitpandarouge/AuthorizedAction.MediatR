@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Petit Panda Rouge</Authors>
+    <Description>Authorized action with MediatR flavour.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/petitpandarouge/AuthorizedAction.MediatR</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
