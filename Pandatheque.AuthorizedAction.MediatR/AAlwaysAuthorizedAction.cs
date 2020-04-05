@@ -68,7 +68,7 @@ namespace Pandatheque.AuthorizedAction.MediatR
         protected override sealed TResponse BuildUnauthorizedResponse(TRequest request, VoidPolicyContext policyContext)
         {
             // Will never be called.
-            return default(TResponse);
+            return default;
         }
 
         #endregion // Methods

@@ -90,11 +90,11 @@ namespace Pandatheque.AuthorizedAction.MediatR
             TPolicyContext context = this.BuildPolicyContext(request);
 
             // Step 2: Checking the policies.
-            IPolicyResult<TAction> result = this.actionChecker.CheckPolicies(context);
+            IPolicyResult<TAction> result = await this.actionChecker.CheckPoliciesAsync(context).ConfigureAwait(false);
             if (result.Allowed)
             {
                 // Step 3: Executing the action.
-                return await result.Action.ExecuteAsync(request, context, cancellationToken);
+                return await result.Action.ExecuteAsync(request, context, cancellationToken).ConfigureAwait(false);
             }
 
             // Step 4: Action is unauthorized.

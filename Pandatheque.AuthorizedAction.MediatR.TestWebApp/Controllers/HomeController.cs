@@ -36,14 +36,14 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Controllers
         public async Task<IActionResult> CanCloturerEnquete(int id)
         {
             CanCloturerEnqueteRequest request = new CanCloturerEnqueteRequest { EnqueteId = id };
-            bool result = await this.mediator.Send(request);
+            bool result = await this.mediator.Send(request).ConfigureAwait(false);
             return this.View(result);
         }
 
         public async Task<IActionResult> CloturerEnquete(int id)
         {
             CloturerEnqueteRequest request = new CloturerEnqueteRequest { EnqueteId = id };
-            (bool, Enquete) result = await this.mediator.Send(request);
+            (bool, Enquete) result = await this.mediator.Send(request).ConfigureAwait(false);
             if (result.Item1)
             {
                 return this.View(result.Item2);
@@ -55,7 +55,7 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Controllers
         public async Task<IActionResult> ListerEnquetes()
         {
             ListerEnquetesRequest request = new ListerEnquetesRequest();
-            (bool, ICollection<Enquete>) result = await this.mediator.Send(request);
+            (bool, ICollection<Enquete>) result = await this.mediator.Send(request).ConfigureAwait(false);
             if (result.Item1)
             {
                 return this.View(result.Item2);

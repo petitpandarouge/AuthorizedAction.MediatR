@@ -66,16 +66,16 @@ namespace Pandatheque.AuthorizedAction.MediatR
         /// <param name="request">The request to handle.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The response.</returns>
-        Task<bool> IRequestHandler<TRequest, bool>.Handle(TRequest request, CancellationToken cancellationToken)
+        async Task<bool> IRequestHandler<TRequest, bool>.Handle(TRequest request, CancellationToken cancellationToken)
         {
             // Step 1: Converting the request to the policy context.
             TPolicyContext context = this.BuildPolicyContext(request);
 
             // Step 2: Checking the policies.
-            IPolicyResult<TAction> result = this.actionChecker.CheckPolicies(context);
+            IPolicyResult<TAction> result = await this.actionChecker.CheckPoliciesAsync(context).ConfigureAwait(false);
 
             // Step 3: Returning the result.
-            return Task.FromResult(result.Allowed);
+            return result.Allowed;
         }
 
         #endregion // Methods

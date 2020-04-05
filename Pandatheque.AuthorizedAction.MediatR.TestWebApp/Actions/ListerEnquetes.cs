@@ -20,7 +20,7 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
             this.cloturerEnqueteChecker = cloturerEnqueteChecker;
         }
 
-        protected override Task<(bool, ICollection<Enquete>)> ExecuteAsync(ListerEnquetesRequest request, CancellationToken cancellationToken)
+        protected override async Task<(bool, ICollection<Enquete>)> ExecuteAsync(ListerEnquetesRequest request, CancellationToken cancellationToken)
         {
             ICollection<Enquete> enquetes = new List<Enquete>
             {
@@ -59,10 +59,11 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
                     Enquete = enquete
                 };
 
-                enquete.CanCloture = this.cloturerEnqueteChecker.CheckPolicies(context).Allowed;
+                var result = await this.cloturerEnqueteChecker.CheckPoliciesAsync(context).ConfigureAwait(false);
+                enquete.CanCloture = result.Allowed;
             }
 
-            return Task.FromResult((true, enquetes));
+            return (true, enquetes);
         }
     }
 }
