@@ -1,5 +1,6 @@
 ﻿using Pandatheque.AuthorizedAction.MediatR.TestWebApp.Models;
 using Pandatheque.AuthorizedAction.MediatR.TestWebApp.Policies.Context;
+using Pandatheque.AuthorizedAction.MediatR.TestWebApp.Requests;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
 {
-    public class ListerEnquetes : ANoParameterAuthorizedAction<(bool, ICollection<Enquete>)>, IListerEnquetes
+    public class ListerEnquetes : AAction<ListerEnquetesRequest, (bool, ICollection<Enquete>)>, IListerEnquetes
     {
         private readonly IAuthorizedActionChecker<CloturerEnquetePolicyContext, ICloturerEnquete> cloturerEnqueteChecker;
 
@@ -17,7 +18,7 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
             this.cloturerEnqueteChecker = cloturerEnqueteChecker;
         }
 
-        protected override Task<(bool, ICollection<Enquete>)> ExecuteAsync(CancellationToken cancellationToken)
+        protected override Task<(bool, ICollection<Enquete>)> ExecuteAsync(ListerEnquetesRequest request, CancellationToken cancellationToken)
         {
             ICollection<Enquete> enquetes = new List<Enquete>
             {

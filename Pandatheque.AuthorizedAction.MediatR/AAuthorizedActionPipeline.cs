@@ -12,13 +12,11 @@ namespace Pandatheque.AuthorizedAction.MediatR
     /// <typeparam name="TRequest">The type of the request.</typeparam>
     /// <typeparam name="TPolicyContext">The type of the context policy.</typeparam>
     /// <typeparam name="TAction">The type of the action.</typeparam>
-    /// <typeparam name="TParameters">The type of the action parameters.</typeparam>
     /// <typeparam name="TResponse">The type of the action response.</typeparam>
-    public abstract class AAuthorizedActionPipeline<TRequest, TPolicyContext, TAction, TParameters, TResponse> : IRequestHandler<TRequest, TResponse>
+    public abstract class AAuthorizedActionPipeline<TRequest, TPolicyContext, TAction, TResponse> : IRequestHandler<TRequest, TResponse>
         where TRequest : class, IRequest<TResponse>
         where TPolicyContext: class, IPolicyContext
-        where TAction : class, IAuthorizedAction<TParameters, TResponse>
-        where TParameters: class
+        where TAction : class, IAuthorizedAction<TRequest, TPolicyContext, TResponse>
     {
         #region Fields
 
@@ -37,7 +35,7 @@ namespace Pandatheque.AuthorizedAction.MediatR
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AAuthorizedActionPipeline{TRequest, TPolicyContext, TAction, TParameters, TResponse}"/> class.
+        /// Initializes a new instance of the <see cref="AAuthorizedAction{TRequest, TPolicyContext, TAction, TParameters, TResponse}"/> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
         protected AAuthorizedActionPipeline(IServiceProvider serviceProvider)
@@ -51,33 +49,22 @@ namespace Pandatheque.AuthorizedAction.MediatR
         #region Methods
 
         /// <summary>
-        /// Converts the request to the policy context.
+        /// Builds the policy context from the request.
         /// </summary>
-        /// <param name="request">The request to convert.</param>
+        /// <param name="request">The request.</param>
         /// <returns>The policy context.</returns>
-        public virtual TPolicyContext ToPolicyContext(TRequest request)
+        public virtual TPolicyContext BuildPolicyContext(TRequest request)
         {
             return request as TPolicyContext;
         }
 
         /// <summary>
-        /// Converts the request and the policy context to the action parameters.
+        /// Builds the the unauthorized response from the request and the policy context.
         /// </summary>
-        /// <param name="request">The request to convert.</param>
-        /// <param name="policyContext">The policy context.</param>
-        /// <returns>The action parameters.</returns>
-        public virtual TParameters ToActionParameters(TRequest request, TPolicyContext policyContext)
-        {
-            return policyContext as TParameters;
-        }
-
-        /// <summary>
-        /// Converts the request and the policy context to the unauthorized response.
-        /// </summary>
-        /// <param name="request">The request to convert.</param>
+        /// <param name="request">The request.</param>
         /// <param name="policyContext">The policy context.</param>
         /// <returns>The unauthorized response.</returns>
-        public abstract TResponse ToUnauthorizedResponse(TRequest request, TPolicyContext policyContext);
+        public abstract TResponse BuildUnauthorizedResponse(TRequest request, TPolicyContext policyContext);
 
         #endregion // Methods
 
@@ -94,21 +81,18 @@ namespace Pandatheque.AuthorizedAction.MediatR
         async Task<TResponse> IRequestHandler<TRequest, TResponse>.Handle(TRequest request, CancellationToken cancellationToken)
         {
             // Step 1: Converting the request to the policy context.
-            TPolicyContext context = this.ToPolicyContext(request);
+            TPolicyContext context = this.BuildPolicyContext(request);
 
             // Step 2: Checking the policies.
             IPolicyResult<TAction> result = this.actionChecker.CheckPolicies(context);
             if (result.Allowed)
             {
-                // Step 3: Converting the request and the policy context to the action parameters.
-                TParameters parameters = this.ToActionParameters(request, context);
-
-                // Step 4: Executing the action.
-                return await result.Action.ExecuteAsync(parameters, cancellationToken);
+                // Step 3: Executing the action.
+                return await result.Action.ExecuteAsync(request, context, cancellationToken);
             }
 
-            // Step 5: Action is unauthorized.
-            return this.ToUnauthorizedResponse(request, context);
+            // Step 4: Action is unauthorized.
+            return this.BuildUnauthorizedResponse(request, context);
         }
 
         #endregion // Methods

@@ -8,19 +8,17 @@ namespace Pandatheque.AuthorizedAction.MediatR
     /// </summary>
     /// <typeparam name="TRequest">The type of the request.</typeparam>
     /// <typeparam name="TAction">The type of the action.</typeparam>
-    /// <typeparam name="TParameters">The type of the action parameters.</typeparam>
-    public abstract class ANoResponseAlwaysAuthorizedActionPipeline<TRequest, TAction, TParameters> : AAlwaysAuthorizedActionPipeline<TRequest, TAction, TParameters, Void>
+    public abstract class AVoidActionPipeline<TRequest, TAction> : AActionPipeline<TRequest, TAction, Void>
         where TRequest : class, IRequest<Void>
-        where TAction : class, IAuthorizedAction<TParameters, Void>
-        where TParameters : class
+        where TAction : class, IVoidAction<TRequest>
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ANoResponseAlwaysAuthorizedActionPipeline{TRequest, TAction, TParameters}"/> class.
+        /// Initializes a new instance of the <see cref="AVoidActionPipeline{TRequest, TAction}"/> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        protected ANoResponseAlwaysAuthorizedActionPipeline(IServiceProvider serviceProvider)
+        protected AVoidActionPipeline(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
         }
@@ -30,11 +28,11 @@ namespace Pandatheque.AuthorizedAction.MediatR
         #region Methods
 
         /// <summary>
-        /// Converts the request and the policy context to the unauthorized response.
+        /// Builds the the unauthorized response from the request.
         /// </summary>
-        /// <param name="request">The request to convert.</param>
+        /// <param name="request">The request.</param>
         /// <returns>The unauthorized response.</returns>
-        protected override sealed Void ToUnauthorizedResponse(TRequest request)
+        protected override sealed Void BuildUnauthorizedResponse(TRequest request)
         {
             return Void.Default;
         }

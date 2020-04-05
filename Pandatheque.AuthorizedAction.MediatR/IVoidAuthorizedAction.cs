@@ -1,9 +1,15 @@
-﻿namespace Pandatheque.AuthorizedAction.MediatR
+﻿using MediatR;
+
+namespace Pandatheque.AuthorizedAction.MediatR
 {
     /// <summary>
-    /// Interface for neither parameter nor response action.
+    /// Interface for no response authorized command with no response.
     /// </summary>
-    public interface IVoidAuthorizedAction : IAuthorizedAction<Void, Void>
+    /// <typeparam name="TRequest">The type of the request.</typeparam>
+    /// <typeparam name="TPolicyContext">The type of the context policy.</typeparam>
+    public interface IVoidAuthorizedAction<TRequest, TPolicyContext> : IAuthorizedAction<TRequest, TPolicyContext, Void>
+        where TRequest : class, IRequest<Void>
+        where TPolicyContext : class, IPolicyContext
     {
     }
 }

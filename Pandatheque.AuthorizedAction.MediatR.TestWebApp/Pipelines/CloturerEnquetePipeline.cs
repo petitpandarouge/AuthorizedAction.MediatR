@@ -10,7 +10,6 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Pipelines
         CloturerEnqueteRequest, // Request
         CloturerEnquetePolicyContext, // Policy context
         ICloturerEnquete, // Action
-        CloturerEnquetePolicyContext, // Action parameters
         (bool, Enquete)> // Action response
     {
         public CloturerEnquetePipeline(IServiceProvider serviceProvider)
@@ -18,7 +17,7 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Pipelines
         {
         }
 
-        public override CloturerEnquetePolicyContext ToPolicyContext(CloturerEnqueteRequest request)
+        public override CloturerEnquetePolicyContext BuildPolicyContext(CloturerEnqueteRequest request)
         {
             // Getting the objects from the database...
             CloturerEnquetePolicyContext context = new CloturerEnquetePolicyContext
@@ -30,7 +29,7 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Pipelines
             return context;
         }
 
-        public override (bool, Enquete) ToUnauthorizedResponse(CloturerEnqueteRequest request, CloturerEnquetePolicyContext policyContext)
+        public override (bool, Enquete) BuildUnauthorizedResponse(CloturerEnqueteRequest request, CloturerEnquetePolicyContext policyContext)
         {
             // Using Problem class...
             return (false, null);
