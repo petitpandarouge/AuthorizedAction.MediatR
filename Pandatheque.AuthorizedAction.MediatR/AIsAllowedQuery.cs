@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 namespace Pandatheque.AuthorizedAction.MediatR
 {
     /// <summary>
-    /// Pipeline is responsible for linking the action execution steps and performing the action execution.
+    /// Base class for the authorized action.
     /// </summary>
+    /// <typeparam name="TAction">The type of the action.</typeparam>
     /// <typeparam name="TRequest">The type of the request.</typeparam>
     /// <typeparam name="TPolicyContext">The type of the context policy.</typeparam>
-    /// <typeparam name="TAction">The type of the action.</typeparam>
-    /// <typeparam name="TResponse">The type of the action response.</typeparam>
-    public abstract class AAuthorizedActionPipeline<TRequest, TPolicyContext, TAction, TResponse> : IRequestHandler<TRequest, TResponse>
-        where TRequest : class, IRequest<TResponse>
+    public abstract class AIsAllowedQuery<TAction, TRequest, TPolicyContext> : IRequestHandler<TRequest, bool>
+        where TRequest : class, ICanExecuteRequest
         where TPolicyContext: class, IPolicyContext
-        where TAction : class, IAuthorizedAction<TRequest, TPolicyContext, TResponse>
+        where TAction : class
     {
         #region Fields
 
@@ -35,10 +34,10 @@ namespace Pandatheque.AuthorizedAction.MediatR
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AAuthorizedAction{TRequest, TPolicyContext, TAction, TParameters, TResponse}"/> class.
+        /// Initializes a new instance of the <see cref="AIsAllowedQuery{TAction, TRequest, TPolicyContext}"/> class.
         /// </summary>
         /// <param name="serviceProvider">The service provider.</param>
-        protected AAuthorizedActionPipeline(IServiceProvider serviceProvider)
+        protected AIsAllowedQuery(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             this.actionChecker = this.serviceProvider.GetRequiredService<IAuthorizedActionChecker<TPolicyContext, TAction>>();
@@ -53,18 +52,7 @@ namespace Pandatheque.AuthorizedAction.MediatR
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The policy context.</returns>
-        public virtual TPolicyContext BuildPolicyContext(TRequest request)
-        {
-            return request as TPolicyContext;
-        }
-
-        /// <summary>
-        /// Builds the the unauthorized response from the request and the policy context.
-        /// </summary>
-        /// <param name="request">The request.</param>
-        /// <param name="policyContext">The policy context.</param>
-        /// <returns>The unauthorized response.</returns>
-        public abstract TResponse BuildUnauthorizedResponse(TRequest request, TPolicyContext policyContext);
+        protected abstract TPolicyContext BuildPolicyContext(TRequest request);
 
         #endregion // Methods
 
@@ -73,30 +61,25 @@ namespace Pandatheque.AuthorizedAction.MediatR
         #region Methods
 
         /// <summary>
-        /// Handles the request by checking the policies and executing the action.
+        /// Handles the request by checking the policies.
         /// </summary>
         /// <param name="request">The request to handle.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The response.</returns>
-        async Task<TResponse> IRequestHandler<TRequest, TResponse>.Handle(TRequest request, CancellationToken cancellationToken)
+        Task<bool> IRequestHandler<TRequest, bool>.Handle(TRequest request, CancellationToken cancellationToken)
         {
             // Step 1: Converting the request to the policy context.
             TPolicyContext context = this.BuildPolicyContext(request);
 
             // Step 2: Checking the policies.
             IPolicyResult<TAction> result = this.actionChecker.CheckPolicies(context);
-            if (result.Allowed)
-            {
-                // Step 3: Executing the action.
-                return await result.Action.ExecuteAsync(request, context, cancellationToken);
-            }
 
-            // Step 4: Action is unauthorized.
-            return this.BuildUnauthorizedResponse(request, context);
+            // Step 3: Returning the result.
+            return Task.FromResult(result.Allowed);
         }
 
         #endregion // Methods
 
-        #endregion // IRequestHandler<TRequest, TResponse>
+        #endregion // IRequestHandler<TRequest, TResponse> 
     }
 }

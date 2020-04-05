@@ -33,6 +33,13 @@ namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        public async Task<IActionResult> CanCloturerEnquete(int id)
+        {
+            CanCloturerEnqueteRequest request = new CanCloturerEnqueteRequest { EnqueteId = id };
+            bool result = await this.mediator.Send(request);
+            return this.View(result);
+        }
+
         public async Task<IActionResult> CloturerEnquete(int id)
         {
             CloturerEnqueteRequest request = new CloturerEnqueteRequest { EnqueteId = id };

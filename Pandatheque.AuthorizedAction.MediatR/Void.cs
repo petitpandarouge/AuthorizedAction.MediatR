@@ -1,7 +1,7 @@
 ﻿namespace Pandatheque.AuthorizedAction.MediatR
 {
     /// <summary>
-    /// Void class as the void is not a class...
+    /// Void class as void is not a class...
     /// </summary>
     public class Void
     {

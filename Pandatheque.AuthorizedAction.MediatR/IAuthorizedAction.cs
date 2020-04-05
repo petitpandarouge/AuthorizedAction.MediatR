@@ -20,10 +20,10 @@ namespace Pandatheque.AuthorizedAction.MediatR
         /// Executes the authorized action.
         /// </summary>
         /// <param name="request">The initiale request.</param>
-        /// <param name="context">The policy context.</param>
+        /// <param name="policyContext">The policy context.</param>
         /// <param name="cancellationToken">The cancelation token.</param>
         /// <returns>The action response.</returns>
-        Task<TResponse> ExecuteAsync(TRequest request, TPolicyContext context, CancellationToken cancellationToken);
+        Task<TResponse> ExecuteAsync(TRequest request, TPolicyContext policyContext, CancellationToken cancellationToken);
 
         #endregion // Methods
     }

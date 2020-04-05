@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
 {
-    public class ListerEnquetes : AAction<ListerEnquetesRequest, (bool, ICollection<Enquete>)>, IListerEnquetes
+    public class ListerEnquetes : AAlwaysAuthorizedAction<IListerEnquetes, ListerEnquetesRequest, (bool, ICollection<Enquete>)>, IListerEnquetes
     {
         private readonly IAuthorizedActionChecker<CloturerEnquetePolicyContext, ICloturerEnquete> cloturerEnqueteChecker;
 
         public ListerEnquetes(
+            IServiceProvider serviceProvider,
             IAuthorizedActionChecker<CloturerEnquetePolicyContext, ICloturerEnquete> cloturerEnqueteChecker)
+            : base(serviceProvider)
         {
             this.cloturerEnqueteChecker = cloturerEnqueteChecker;
         }

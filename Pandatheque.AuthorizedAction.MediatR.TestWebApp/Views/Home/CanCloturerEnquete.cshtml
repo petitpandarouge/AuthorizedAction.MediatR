@@ -1,0 +1,17 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "Puis-je clôturer l'enquête?";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Résultat</h1>
+    @if (Model)
+    {
+        <p>C'est bon, ça ira pour cette fois...</p>
+    }
+    else
+    {
+        <p>C'est pas possible, tu passes pas...</p>
+    }
+</div>
+

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Pandatheque.AuthorizedAction.MediatR.TestWebApp.Actions
 {
-    public interface IListerEnquetes : IAction<ListerEnquetesRequest, (bool, ICollection<Enquete>)>
+    public interface IListerEnquetes : IAlwaysAuthorizedAction<ListerEnquetesRequest, (bool, ICollection<Enquete>)>
     {
     }
 }
